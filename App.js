@@ -1,12 +1,31 @@
+import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Login from './screens/Login';
+import Registration from './screens/Registration';
+import Home from './screens/Home';
+import CreatePayment from './screens/CreatePayment';
+import CreatAccount from './screens/CreateAccount';
 
-export default function App() {
+const Stack = createNativeStackNavigator()
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false
+        }}
+      >
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Registration" component={Registration} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="CreatePayment" component={CreatePayment} />
+        <Stack.Screen name="CreateAccount" component={CreatAccount} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -18,3 +37,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default App;
