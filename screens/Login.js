@@ -43,7 +43,7 @@ export default function Login({ navigation }) {
         style={loginStyle.container}
         keyboardShouldPersistTaps='handled'
       >
-        <View style={loginStyle.header}>
+        <View style={loginStyle.headerLogin}>
           <Text style={loginStyle.title}>Twäwis</Text>
           <Text style={loginStyle.title}>Onlinebanking</Text>
         </View>
@@ -63,6 +63,7 @@ export default function Login({ navigation }) {
             style={inputView.textInput}
             onChangeText={(password) => setPassword(password)}
             placeholder="Passwort"
+            secureTextEntry={true}
           />
           <TouchableOpacity
             style={[buttonView.button, { marginTop: 50 }]}
@@ -71,11 +72,12 @@ export default function Login({ navigation }) {
             <Text style={buttonView.buttonText}>Log In</Text>
           </TouchableOpacity>
           <TouchableOpacity
+          style={textLink.container}
             onPress={() =>
               navigation.navigate("Registration")
             }
           >
-            <Text style={textLink.textLink}>Noch kein Konto? Hier Registrieren</Text>
+            <Text style={textLink.textLinkMid}>Noch kein Konto? Hier Registrieren</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -86,6 +88,7 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: "30%",
     alignItems: "center",
     flex: 1,
   },

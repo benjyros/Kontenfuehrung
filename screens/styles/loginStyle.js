@@ -6,9 +6,17 @@ export default StyleSheet.create({
 		flex: 1,
 		backgroundColor: '#3F2045',
 	},
-	header: {
+	headerLogin: {
 		width: '100%',
 		height: 250,
+		backgroundColor: '#3F2045',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		paddingBottom: 25,
+	},
+	headerRegistration: {
+		width: '100%',
+		height: 150,
 		backgroundColor: '#3F2045',
 		justifyContent: 'flex-end',
 		alignItems: 'center',
@@ -20,7 +28,6 @@ export default StyleSheet.create({
 		color: '#fff',
 	},
 	main: {
-		flex: 2,
 		paddingHorizontal: 20,
 	},
 });

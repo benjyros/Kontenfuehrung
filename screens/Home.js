@@ -1,27 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
+import { auth } from "../firebase";
+import { signOut } from 'firebase/auth';
+
 export default function Home ({ navigation }) {
+
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      navigation.replace('Login');
+    })
+      .catch((error) => {
+        alert(error.message);
+      })
+  }
+
   return (
     <View style={styles.container}>
       <Text>home</Text>
 			<Button
-        title="To login"
-        onPress={() =>
-          navigation.navigate('Login')
-        }
-    	/>
-      <Button
-        title="To registration"
-        onPress={() =>
-          navigation.navigate('Registration')
-        }
-    	/>
-			<Button
-        title="To home"
-        onPress={() =>
-          navigation.navigate('Home')
-        }
+        title="Abmelden"
+        onPress={handleSignOut}
     	/>
 			<Button
         title="To create payment"
