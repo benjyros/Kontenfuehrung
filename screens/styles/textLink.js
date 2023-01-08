@@ -4,10 +4,7 @@ export default StyleSheet.create({
 	textLink: {
         textDecorationLine: 'underline',
 		alignSelf: 'flex-end',
+		color: '#FFF',
+		fontSize: 13,
 	},
-	textLinkViewRight: {
-        height: 30,
-		margin: 12,
-		width: '60%',
-    }
 });

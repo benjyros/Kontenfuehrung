@@ -6,8 +6,9 @@ export default StyleSheet.create({
         margin: 12,
         borderWidth: 1,
         padding: 10,
-        borderColor: '#F1A661',
+        borderColor: '#000',
         borderRadius: 7,
-        width: '60%',
+        width: '75%',
+        backgroundColor: '#FFF',
     },
 });

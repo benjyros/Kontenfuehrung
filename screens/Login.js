@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View, InputAccessoryView } from 'react-native';
 
-import indexStyle from './styles/indexStyle';
+import loginStyle from './styles/loginStyle';
 import buttonView from './styles/buttonView';
 import inputView from './styles/inputView';
 import textLink from './styles/textLink';
@@ -37,13 +37,20 @@ export default function Login({ navigation }) {
   }
 
   return (
-    <View style={indexStyle.container}>
-      <View style={indexStyle.header}>
-        <Text style={indexStyle.title}>Kontenführung</Text>
-      </View>
+    <View style={loginStyle.container}>
       <ScrollView
         scrollEnabled={false}
-        style={indexStyle.main}
+        style={loginStyle.container}
+        keyboardShouldPersistTaps='handled'
+      >
+        <View style={loginStyle.header}>
+          <Text style={loginStyle.title}>Twäwis</Text>
+          <Text style={loginStyle.title}>Onlinebanking</Text>
+        </View>
+      </ScrollView>
+      <ScrollView
+        scrollEnabled={false}
+        style={loginStyle.main}
         keyboardShouldPersistTaps='handled'
       >
         <View style={styles.container}>
@@ -58,18 +65,17 @@ export default function Login({ navigation }) {
             placeholder="Passwort"
           />
           <TouchableOpacity
-            style={textLink.textLinkViewRight}
+            style={[buttonView.button, { marginTop: 50 }]}
+            onPress={handleSignIn}
+          >
+            <Text style={buttonView.buttonText}>Log In</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() =>
               navigation.navigate("Registration")
             }
           >
-            <Text style={textLink.textLink}>Registrieren</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={buttonView.button}
-            onPress={handleSignIn}
-          >
-            <Text style={buttonView.buttonText}>Anmelden</Text>
+            <Text style={textLink.textLink}>Noch kein Konto? Hier Registrieren</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -80,7 +86,6 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: "30%",
     alignItems: "center",
     flex: 1,
   },

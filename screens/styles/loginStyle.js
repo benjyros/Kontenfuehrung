@@ -1,24 +1,18 @@
 import { StyleSheet } from 'react-native';
 
+//colors: 01371E 56070C 212C58 3F2045 99431F E2B007
 export default StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#FFF',
+		backgroundColor: '#3F2045',
 	},
 	header: {
 		width: '100%',
 		height: 250,
-		backgroundColor: '#01371E',
+		backgroundColor: '#3F2045',
 		justifyContent: 'flex-end',
 		alignItems: 'center',
 		paddingBottom: 25,
-		shadowColor: '#F1A661',
-		shadowOpacity: 0.8,
-		shadowRadius: 2,
-		shadowOffset: {
-			height: 1,
-			width: 1
-		}
 	},
 	title: {
 		fontWeight: 'bold',
@@ -26,8 +20,7 @@ export default StyleSheet.create({
 		color: '#fff',
 	},
 	main: {
-		flex: 1,
-		paddingTop: 50,
+		flex: 2,
 		paddingHorizontal: 20,
 	},
 });
