@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View, InputAccessoryView } from 'react-native';
-import { auth } from "../firebase";
+import { StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View, InputAccessoryView } from 'react-native';
+
+import indexStyle from './styles/indexStyle';
+import buttonView from './styles/buttonView';
+import inputView from './styles/inputView';
+import textLink from './styles/textLink';
+
+import { auth } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login({ navigation }) {
