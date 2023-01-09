@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Picker } from '@react-native-picker/picker';
 import { StyleSheet, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
