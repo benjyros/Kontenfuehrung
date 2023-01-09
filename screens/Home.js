@@ -28,9 +28,16 @@ export default function Home({ navigation }) {
         // Loop through all documents
         querySnapshot.forEach((doc) => {
           // Get specific datas out of the document
+          const getType = () => {
+            if(i === 0){
+              return doc.data().type;
+            }else{
+              return doc.data().type + " " + accounts.length;
+            }
+          }
           const newAccount = {
             id: accounts.length + 1,
-            type: doc.data().type,
+            type: getType(),
             balance: doc.data().balance + " CHF"
           };
           // Put datas into array for all accounts
@@ -78,7 +85,7 @@ export default function Home({ navigation }) {
             <TouchableOpacity
               style={styles.navitem}
               onPress={() =>
-                navigation.navigate('CreatePayment')
+                navigation.replace('AccountTransfer')
               }
             >
               <Text style={styles.navitemText}>Kontoübertrag</Text>

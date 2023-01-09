@@ -5,6 +5,7 @@ import Login from './screens/Login';
 import Registration from './screens/Registration';
 import Home from './screens/Home';
 import CreatePayment from './screens/CreatePayment';
+import AccountTransfer from './screens/AccountTransfer';
 import CreatAccount from './screens/CreateAccount';
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -21,6 +22,7 @@ const App = () => (
       <Screen name="Registration" component={Registration}></Screen>
       <Screen name="Home" component={Home}></Screen>
       <Screen name="CreatePayment" component={CreatePayment}></Screen>
+      <Screen name="AccountTransfer" component={AccountTransfer}></Screen>
       <Screen name="CreateAccount" component={CreatAccount}></Screen>
     </Navigator>
   </NavigationContainer>
