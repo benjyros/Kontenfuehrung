@@ -14,6 +14,7 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Handle auth changed if user is logged in or not
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -26,6 +27,7 @@ export default function Login({ navigation }) {
     });
   }, []);
 
+  // Hanlder for signing in user
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
