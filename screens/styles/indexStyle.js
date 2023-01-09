@@ -7,11 +7,11 @@ export default StyleSheet.create({
 	},
 	header: {
 		width: '100%',
-		height: 250,
-		backgroundColor: '#01371E',
+		height: 300,
+		backgroundColor: '#3F2045',
 		justifyContent: 'flex-end',
-		alignItems: 'center',
 		paddingBottom: 25,
+		paddingHorizontal: 15,
 		shadowColor: '#F1A661',
 		shadowOpacity: 0.8,
 		shadowRadius: 2,
@@ -27,7 +27,7 @@ export default StyleSheet.create({
 	},
 	main: {
 		flex: 1,
-		paddingTop: 50,
+		paddingTop: 30,
 		paddingHorizontal: 20,
 	},
 });
