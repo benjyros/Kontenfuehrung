@@ -65,7 +65,6 @@ export default function Registration({ navigation }) {
     // Concatenate the country code, check digit, and domestic bank account number to form the IBAN
     const iban = countryCode + checkDigit + accountNumber;
 
-    console.log(iban);
     return iban;
   }
 
