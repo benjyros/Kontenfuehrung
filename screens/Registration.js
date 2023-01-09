@@ -55,11 +55,11 @@ export default function Registration({ navigation }) {
 
   const createAccForUser = async (count) => {
     const iban = createIban();
-    await setDoc(doc(firestore, "users", "user" + count, "accounts", "acc0")), {
+    await setDoc(doc(firestore, "users", "user" + count, "accounts", "acc0"), {
       id: "acc0",
       iban: iban,
       balance: 0,
-    }
+    });
   }
 
   const createIban = () => {
