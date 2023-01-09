@@ -32,18 +32,6 @@ export default function Registration({ navigation }) {
       });
   }
 
-  /*
-  const getUserCount = async () => {
-    const querySnapshot = await getDocs(collection(firestore, "users"));
-    let count = 0;
-    querySnapshot.forEach((doc) => {
-      count = count + 1;
-      //console.log(doc.id, " => ", doc.data());
-    });
-    return count;
-  }
-  */
-
   const addUserToDB = async () => {
     await setDoc(doc(firestore, "users", auth.currentUser.uid), {
       id: auth.currentUser.uid,
