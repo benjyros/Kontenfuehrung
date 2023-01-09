@@ -120,28 +120,29 @@ export default function Registration({ navigation }) {
 						</View>
 						<View style={styles.subcontent}>
 							<View style={styles.amount}>
-								<Text>Betrag</Text>
 								<TextInput
 									style={styles.textInput}
 									onChangeText={(amount) => setAmount(amount)}
-									placeholder="z.B. 200"
+									placeholder="Betrag"
 								/>
 								<Text>CHF</Text>
 							</View>
-							<TouchableOpacity
-								style={[buttonView.button, { marginTop: 50 }]}
-								onPress={transfer}
-							>
-								<Text style={buttonView.buttonText}>Ausführen</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={textLink.container}
-								onPress={() =>
-									navigation.replace("Login")
-								}
-							>
-								<Text style={textLink.textLinkLeft}>&lt; Abbrechen</Text>
-							</TouchableOpacity>
+							<View style={styles.buttons}>
+								<TouchableOpacity
+									style={[buttonView.button, { marginTop: 50 }]}
+									onPress={transfer}
+								>
+									<Text style={buttonView.buttonText}>Ausführen</Text>
+								</TouchableOpacity>
+								<TouchableOpacity
+									style={textLink.container}
+									onPress={() =>
+										navigation.replace("Login")
+									}
+								>
+									<Text style={textLink.textLinkLeft}>&lt; Abbrechen</Text>
+								</TouchableOpacity>
+							</View>
 						</View>
 					</View>
 				</ScrollView>
@@ -161,23 +162,38 @@ const styles = StyleSheet.create({
 		width: "100%",
 	},
 	main: {
-		flex: 3,
+		flex: 4,
 		backgroundColor: "blue",
 		width: "100%",
 	},
 	pickers: {
 		flex: 1,
 		backgroundColor: "orange",
-		height: 400,
+		width: "100%",
 	},
 	picker: {
 		margin: 50,
 	},
 	subcontent: {
 		flex: 1,
-		backgroundColor: "yellow"
+		backgroundColor: "yellow",
+		width: "100%",
+		justifyContent: "center",
 	},
 	amount: {
 		flexDirection: "row",
+		alignItems: "center",
+		width: "75%",
+		alignSelf: "center",
+	},
+	textInput: {
+		backgroundColor: "#FFF",
+		height: 50,
+		width: 100,
+		borderRadius: 5,
+	},
+	buttons: {
+		width: "100%",
+		alignItems: "center",
 	}
 });
