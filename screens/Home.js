@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 // import indexStyle from './styles/indexStyle';
 import transactionsStyle from './styles/transactionsStyle';
 
-import { auth } from "../firebase";
+import { auth, firestore } from "../firebase";
 import { signOut } from 'firebase/auth';
+import { doc, getDoc, collection, setDoc, getDocs } from "firebase/firestore";
 
 export default function Home({ navigation }) {
 
+  const [accounts, setAccounts] = useState([]);
   const [selected, setSelected] = useState(1);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(firestore, "users", auth.currentUser.uid, "accounts"));
+      querySnapshot.forEach((doc) => {
+        const newAccount = {
+          id: accounts.length + 1,
+          type: doc.data().type,
+          balance: doc.data().balance + " CHF"
+        };
+        setAccounts([...accounts, newAccount]);
+      });
+    };
+    fetchData();
+  }, []);
 
   const handleSignOut = () => {
     signOut(auth).then(() => {
@@ -18,17 +35,6 @@ export default function Home({ navigation }) {
       .catch((error) => {
         alert(error.message);
       })
-  }
-
-  const accounts = [
-    { id: 1, type: "Privatkonto", balance: "0.01 CHF" },
-    { id: 2, type: "Sparkonto", balance: "6'999'420 CHF" },
-    { id: 3, type: "Sparkonto", balance: "69'420 CHF" },
-    { id: 4, type: "Sparkonto", balance: "69'420 CHF" },
-  ];
-
-  const getAccounts = () => {
-    
   }
 
   return (
