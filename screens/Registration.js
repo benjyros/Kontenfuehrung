@@ -32,6 +32,7 @@ export default function Registration({ navigation }) {
       });
   }
 
+  /*
   const getUserCount = async () => {
     const querySnapshot = await getDocs(collection(firestore, "users"));
     let count = 0;
@@ -41,22 +42,21 @@ export default function Registration({ navigation }) {
     });
     return count;
   }
+  */
 
   const addUserToDB = async () => {
-    const count = await getUserCount();
-    await setDoc(doc(firestore, "users", "user" + count), {
-      id: "user" + count,
+    await setDoc(doc(firestore, "users", auth.currentUser.uid), {
+      id: auth.currentUser.uid,
       surname: surname,
       name: name,
       email: email
     });
-    createAccForUser(count);
+    createAccForUser();
   }
 
-  const createAccForUser = async (count) => {
+  const createAccForUser = async () => {
     const iban = createIban();
-    await setDoc(doc(firestore, "users", "user" + count, "accounts", "acc0"), {
-      id: "acc0",
+    await setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", iban), {
       iban: iban,
       balance: 0,
     });
