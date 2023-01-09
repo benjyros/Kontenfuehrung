@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
 import { Button, StyleSheet, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 // import indexStyle from './styles/indexStyle';
@@ -9,6 +9,8 @@ import { signOut } from 'firebase/auth';
 
 export default function Home({ navigation }) {
 
+  const [selected, setSelected] = useState(1);
+
   const handleSignOut = () => {
     signOut(auth).then(() => {
       navigation.replace('Login');
@@ -18,47 +20,71 @@ export default function Home({ navigation }) {
       })
   }
 
+  const accounts = [
+    { id: 1, type: "Privatkonto", balance: "0.01 CHF" },
+    { id: 2, type: "Sparkonto", balance: "6'999'420 CHF" },
+    { id: 3, type: "Sparkonto", balance: "69'420 CHF" },
+    { id: 4, type: "Sparkonto", balance: "69'420 CHF" },
+  ];
+
+  const getAccounts = () => {
+    
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.navigation}>
-          <Button
-            title="Abmelden"
-            onPress={handleSignOut}
-          />
-          <Button
-            title="To create payment"
-            onPress={() =>
-              navigation.navigate('CreatePayment')
-            }
-          />
-          <Button
-            title="To create account"
-            onPress={() =>
-              navigation.navigate('CreateAccount')
-            }
-          />
+          <ScrollView
+            horizontal={true}
+          >
+            <TouchableOpacity
+              style={styles.navitem}
+              onPress={handleSignOut}
+            >
+              <Text style={styles.navitemText}>Abmelden</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.navitem}
+              onPress={() =>
+                navigation.navigate('CreatePayment')
+              }
+            >
+              <Text style={styles.navitemText}>Zahlung erfassen</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.navitem}
+              onPress={() =>
+                navigation.navigate('CreatePayment')
+              }
+            >
+              <Text style={styles.navitemText}>Kontoübertrag</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.navitem}
+              onPress={() =>
+                navigation.navigate('CreateAccount')
+              }
+            >
+              <Text style={styles.navitemText}>Sparkonto erstellen</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
         <View style={styles.accounts}>
           <ScrollView
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
           >
-            <TouchableOpacity style={styles.account}>
-              <Text style={styles.text}>Privatkonto</Text>
-              <Text style={styles.text}>0.01 CHF</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.account}>
-              <Text style={styles.text}>Sparkonto</Text>
-              <Text style={styles.text}>6'999'420 CHF</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.account}>
-              <Text style={styles.text}>Sparkonto</Text>
-              <Text style={styles.text}>69'420 CHF</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.account}>
-              <Text style={styles.text}>Sparkonto</Text>
-              <Text style={styles.text}>69'420 CHF</Text>
-            </TouchableOpacity>
+            {accounts.map((account) => (
+              <TouchableOpacity
+                key={account.id}
+                style={[styles.account, selected === account.id ? styles.selected : null]}
+                onPress={() => setSelected(account.id)}
+              >
+                <Text style={styles.title}>{account.type}</Text>
+                <Text style={styles.text}>{account.balance}</Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         </View>
       </View>
@@ -83,30 +109,9 @@ export default function Home({ navigation }) {
               </View>
             </View>
           </View>
-
-          <View style={styles.container}>
-            <Text>home</Text>
-            <Button
-              title="Abmelden"
-              onPress={handleSignOut}
-            />
-            <Button
-              title="To create payment"
-              onPress={() =>
-                navigation.navigate('CreatePayment')
-              }
-            />
-            <Button
-              title="To create account"
-              onPress={() =>
-                navigation.navigate('CreateAccount')
-              }
-            />
-          </View>
         </ScrollView>
       </View>
 
-      <StatusBar style="auto" />
     </View>
   );
 }
@@ -119,21 +124,31 @@ const styles = StyleSheet.create({
     flex: 2,
     width: "100%",
     backgroundColor: '#3F2045',
-    shadowColor: '#F1A661',
-		shadowOpacity: 0.8,
-		shadowRadius: 2,
-		shadowOffset: {
-			height: 1,
-			width: 1
-		}
+    shadowColor: '#000',
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    shadowOffset: {
+      height: 1,
+      width: 1,
+    }
   },
   navigation: {
     flexDirection: "row",
-    flex: 1
+    flex: 1,
+    alignItems: "center",
+  },
+  navitem: {
+    margin: 10,
+    padding: 10,
+    alignItems: "center",
+  },
+  navitemText: {
+    textDecorationLine: 'underline',
+    color: "#FFF",
   },
   accounts: {
     width: "100%",
-    flex: 1
+    flex: 1,
   },
   account: {
     backgroundColor: "#FFF",
@@ -143,6 +158,14 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingTop: 5,
     padding: 2,
+  },
+  selected: {
+    opacity: 0.2,
+  },
+  title: {
+    fontWeight: "bold",
+    alignSelf: "center",
+    margin: 10,
   },
   text: {
     alignSelf: "center",
