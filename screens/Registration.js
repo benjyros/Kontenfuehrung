@@ -58,7 +58,8 @@ export default function Registration({ navigation }) {
     const iban = createIban();
     await setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", iban), {
       iban: iban,
-      balance: 0,
+      type: "Privatkonto",
+      balance: 50,
     });
   }
 
