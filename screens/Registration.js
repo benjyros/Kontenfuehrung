@@ -19,10 +19,12 @@ export default function Registration({ navigation }) {
   const [password, setPassword] = useState("");
   const [passwordVal, setPasswordVal] = useState("");
 
+  // Event handler for signing up
   const handleSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
+        // Add created user to database
         addUserToDB();
         navigation.replace('Home');
       })
@@ -32,6 +34,7 @@ export default function Registration({ navigation }) {
       });
   }
 
+  // Function for adding user to db
   const addUserToDB = async () => {
     await setDoc(doc(firestore, "users", auth.currentUser.uid), {
       id: auth.currentUser.uid,
@@ -42,6 +45,7 @@ export default function Registration({ navigation }) {
     createAccForUser();
   }
 
+  // Function for adding an private account for user
   const createAccForUser = async () => {
     const iban = createIban();
     await setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", iban), {
@@ -65,7 +69,9 @@ export default function Registration({ navigation }) {
     return iban;
   }
 
+  // Function for creating user
   function createUser() {
+    // Validate if all inputs are filled out
     if (name != "" && surname != "" && email != "" && password != "" && passwordVal != "") {
       if (password === passwordVal) {
         handleSignUp();
