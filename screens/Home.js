@@ -6,7 +6,7 @@ import transactionsStyle from './styles/transactionsStyle';
 
 import { auth, firestore } from "../firebase";
 import { signOut } from 'firebase/auth';
-import { doc, getDoc, collection, setDoc, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, setDoc, getDocs, query, where } from "firebase/firestore";
 
 export default function Home({ navigation }) {
 
@@ -14,27 +14,37 @@ export default function Home({ navigation }) {
   const [selected, setSelected] = useState(1);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const q1 = query(collection(firestore, "users", auth.currentUser.uid, "accounts"), where("type", "==", "Privatkonto"));
-      const querySnapshot1 = await getDocs(q);
-      const querySnapshot = await getDocs(collection(firestore, "users", auth.currentUser.uid, "accounts"));
+    async function fetchData() {
+      // Defining all types of accounts
+      var types = ["Privatkonto", "Sparkonto"];
+      // Defining array for all accounts
       var accounts = [];
-      let count = 0;
-      querySnapshot.forEach((doc) => {
-        count = count + 1;
-        const newAccount = {
-          id: count,
-          type: doc.data().type,
-          balance: doc.data().balance + " CHF"
-        };
-        accounts[count] = newAccount;
-      });
+      //Looping through all types of accounts
+      for (let i = 0; i < types.length; i++) {
+        // Query accounts where {types[i]}
+        const q = query(collection(firestore, "users", auth.currentUser.uid, "accounts"), where("type", "==", types[i]));
+        // Get documents of query
+        const querySnapshot = await getDocs(q);
+        // Loop through all documents
+        querySnapshot.forEach((doc) => {
+          // Get specific datas out of the document
+          const newAccount = {
+            id: accounts.length + 1,
+            type: doc.data().type,
+            balance: doc.data().balance + " CHF"
+          };
+          // Put datas into array for all accounts
+          accounts[accounts.length] = newAccount;
+        });
+      }
+      // Set useState with the accounts
       setAccounts(accounts);
     };
     fetchData();
   }, []);
 
 
+  // Event handler when signing out
   const handleSignOut = () => {
     signOut(auth).then(() => {
       navigation.replace('Login');
@@ -76,7 +86,7 @@ export default function Home({ navigation }) {
             <TouchableOpacity
               style={styles.navitem}
               onPress={() =>
-                navigation.navigate('CreateAccount')
+                navigation.replace('CreateAccount')
               }
             >
               <Text style={styles.navitemText}>Sparkonto erstellen</Text>

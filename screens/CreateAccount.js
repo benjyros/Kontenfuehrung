@@ -5,6 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 
 export default function CreatAccount({ navigation }) {
 
+  // Create saving account for user
   const createAccount = async () => {
     const iban = createIban();
     await setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", iban), {
@@ -12,7 +13,7 @@ export default function CreatAccount({ navigation }) {
       type: "Sparkonto",
       balance: 0,
     });
-    navigation.navigate("Home");
+    navigation.replace("Home");
   }
 
   const createIban = () => {
@@ -25,7 +26,6 @@ export default function CreatAccount({ navigation }) {
     // Concatenate the country code, check digit, and domestic bank account number to form the IBAN
     const iban = countryCode + checkDigit + accountNumber;
 
-    console.log(iban);
     return iban;
   }
 
