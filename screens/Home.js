@@ -15,18 +15,25 @@ export default function Home({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
+      const q1 = query(collection(firestore, "users", auth.currentUser.uid, "accounts"), where("type", "==", "Privatkonto"));
+      const querySnapshot1 = await getDocs(q);
       const querySnapshot = await getDocs(collection(firestore, "users", auth.currentUser.uid, "accounts"));
+      var accounts = [];
+      let count = 0;
       querySnapshot.forEach((doc) => {
+        count = count + 1;
         const newAccount = {
-          id: accounts.length + 1,
+          id: count,
           type: doc.data().type,
           balance: doc.data().balance + " CHF"
         };
-        setAccounts([...accounts, newAccount]);
+        accounts[count] = newAccount;
       });
+      setAccounts(accounts);
     };
     fetchData();
   }, []);
+
 
   const handleSignOut = () => {
     signOut(auth).then(() => {
