@@ -5,7 +5,6 @@ import { firestore } from "../../firebase";
 export default function createIban() {
     var iban = "";
     do {
-
         // Generate a random domestic bank account number
         const accountNumber = Math.random().toString(36).substring(2);
         // Generate a random check digit

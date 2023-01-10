@@ -6,7 +6,7 @@ import buttonView from './styles/buttonView';
 import textLink from './styles/textLink';
 
 import { auth, firestore } from "../firebase";
-import { doc, getDoc, collection, setDoc, getDocs, query, where, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, setDoc, getDocs, query, where, updateDoc, serverTimestamp } from "firebase/firestore";
 
 
 export default function Registration({ navigation }) {
@@ -19,6 +19,8 @@ export default function Registration({ navigation }) {
 	const [accounts, setAccounts] = useState([]);
 	const [debitAccs, setDebitAccs] = useState([]);
 
+	const [surname, setSurname] = useState("");
+	const [name, setName] = useState("");
 	useEffect(() => {
 		async function fetchData() {
 			// Defining all types of accounts
@@ -54,7 +56,7 @@ export default function Registration({ navigation }) {
 				});
 			}
 			// Set useState with the accounts
-			
+
 			setAccounts(accounts);
 			setDebitAccs(debitAccs);
 		};
@@ -68,31 +70,54 @@ export default function Registration({ navigation }) {
 		} else if (debitAcc === "" || creditAcc === "") {
 			alert("Bitte geben Sie die Kontos an.");
 		} else if (amount != "") {
-			tranfer();
+			transfer();
 		} else {
 			alert("Bitte geben Sie einen Betrag ein.");
 		}
 	}
 
-	const tranfer = async () => {
+	const transfer = async () => {
 		const debitRef = doc(firestore, "users", auth.currentUser.uid, "accounts", debitAcc);
 		const creditRef = doc(firestore, "users", auth.currentUser.uid, "accounts", creditAcc);
 
 		const debitSnap = await getDoc(debitRef);
 		const creditSnap = await getDoc(creditRef);
 
-		if(Number(debitSnap.data().balance) < Number(amount)){
+		if (Number(debitSnap.data().balance) < Number(amount)) {
 			alert("Der Betrag ist zu hoch als das Ihr Konto zur Verfügung hat.");
-		}else {
+		} else {
 			await updateDoc(debitRef, {
 				balance: (Number(debitSnap.data().balance) - Number(amount))
 			});
-	
+
 			await updateDoc(creditRef, {
 				balance: (Number(creditSnap.data().balance) + Number(amount))
 			});
-			navigation.replace("Home");
+			createTransferDoc();
 		}
+	}
+
+	const createTransferDoc = async () => {
+		const userRef = doc(firestore, "users", auth.currentUser.uid);
+		const userSnap = getDoc(userRef);
+		createTransaction((await userSnap).data().surname, (await userSnap).data().name);
+	}
+
+	const createTransaction = async (surname, name) => {
+		var currentTimeInSeconds = Math.round(new Date().getTime() / 1000);
+		setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", debitAcc, "transactions", currentTimeInSeconds.toString()), {
+			timestamp: currentTimeInSeconds,
+			amount: "-" + amount + " CHF",
+			type: "Kontoübertrag",
+			receiver: surname + " " + name
+		});
+		setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", creditAcc, "transactions", currentTimeInSeconds.toString()), {
+			timestamp: currentTimeInSeconds,
+			amount: "+" + amount + " CHF",
+			type: "Kontoübertrag",
+			receiver: surname + " " + name
+		});
+		navigation.replace("Home");
 	}
 
 	return (
