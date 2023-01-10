@@ -10,7 +10,12 @@ import { auth, firestore } from "../firebase";
 import { doc, getDoc, collection, setDoc, getDocs, query, where, updateDoc } from "firebase/firestore";
 
 export default function CreatePayment({ navigation }) {
-  const [account, setAccount] = useState("");
+  const [debitAcc, setDebitAcc] = useState("");
+  const [balance, setBalance] = useState("");
+  const [iban, setIban] = useState("");
+  const [surname, setSurname] = useState("");
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -19,42 +24,56 @@ export default function CreatePayment({ navigation }) {
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        setAccount(doc.data().iban + " - " + doc.data().balance + " CHF");
+        setDebitAcc(doc.data().iban);
+        setBalance(doc.data().balance)
       });
     };
     fetchData();
   }, []);
 
   const preTransfer = () => {
-    if (debitAcc === creditAcc) {
-      alert("Sie können nicht auf das gleiche Konto transferieren.");
-    } else if (debitAcc === "" || creditAcc === "") {
-      alert("Bitte geben Sie die Kontos an.");
-    } else if (amount != "") {
+    if (amount === "") {
+      alert("Bitte geben Sie einen Betrag ein.");
+    } else if (iban != "" && surname != "" && name != "") {
       tranfer();
     } else {
-      alert("Bitte geben Sie einen Betrag ein.");
+      alert("Bitte überprüfen Sie die Daten nochmals.");
     }
   }
 
   const tranfer = async () => {
-    const debitRef = doc(firestore, "users", auth.currentUser.uid, "accounts", debitAcc);
-    const creditRef = doc(firestore, "users", auth.currentUser.uid, "accounts", creditAcc);
+    const q1 = query(collection(firestore, "users"), where("surname", "==", surname), where("name", "==", name));
+    const querySnapshot1 = await getDocs(q1);
 
-    const debitSnap = await getDoc(debitRef);
-    const creditSnap = await getDoc(creditRef);
+    if (querySnapshot1.empty) {
+      alert("Dieser Empfänger existiert nicht.");
+    }
+    else {
+      querySnapshot1.forEach(async (document) => {
+        const q = query(collection(firestore, "users", document.data().id, "accounts"), where("iban", "==", iban));
+        // Get document of query
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+          alert("Die IBAN existiert nicht.")
+        }
+        else {
+          const debitRef = doc(firestore, "users", auth.currentUser.uid, "accounts", debitAcc);
+          const creditRef = doc(firestore, "users", document.data().id, "accounts", iban);
 
-    if (Number(debitSnap.data().balance) < Number(amount)) {
-      alert("Der Betrag ist zu hoch als das Ihr Konto zur Verfügung hat.");
-    } else {
-      await updateDoc(debitRef, {
-        balance: (Number(debitSnap.data().balance) - Number(amount))
+          console.log(debitAcc);
+          const debitSnap =  await getDoc(debitRef);
+          const creditSnap = await getDoc(creditRef);
+          console.log(debitSnap.data());
+          await updateDoc(debitRef, {
+            balance: (Number(debitSnap.data().balance) - Number(amount))
+          });
+
+          await updateDoc(creditRef, {
+            balance: (Number(creditSnap.data().balance) + Number(amount))
+          });
+          navigation.replace("Home");
+        }
       });
-
-      await updateDoc(creditRef, {
-        balance: (Number(creditSnap.data().balance) + Number(amount))
-      });
-      navigation.replace("Home");
     }
   }
 
@@ -95,7 +114,7 @@ export default function CreatePayment({ navigation }) {
             </View>
             <View style={{ width: "75%", alignSelf: "center" }}>
               <Text style={styles.text}>Belastung auf Privatkonto:</Text>
-              <Text style={styles.text}>{account}</Text>
+              <Text style={styles.text}>{debitAcc} - {balance} CHF</Text>
             </View>
             <View style={styles.amount}>
               <TextInput
