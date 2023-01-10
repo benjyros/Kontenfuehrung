@@ -6,6 +6,8 @@ import buttonView from './styles/buttonView';
 import inputView from "./styles/inputView";
 import textLink from './styles/textLink';
 
+import createTransferDoc from "./functions/transaction";
+
 import { auth, firestore } from "../firebase";
 import { doc, getDoc, collection, setDoc, getDocs, query, where, updateDoc } from "firebase/firestore";
 
@@ -60,21 +62,30 @@ export default function CreatePayment({ navigation }) {
           const debitRef = doc(firestore, "users", auth.currentUser.uid, "accounts", debitAcc);
           const creditRef = doc(firestore, "users", document.data().id, "accounts", iban);
 
-          console.log(debitAcc);
-          const debitSnap =  await getDoc(debitRef);
+          const debitSnap = await getDoc(debitRef);
           const creditSnap = await getDoc(creditRef);
-          console.log(debitSnap.data());
-          await updateDoc(debitRef, {
-            balance: (Number(debitSnap.data().balance) - Number(amount))
-          });
 
-          await updateDoc(creditRef, {
-            balance: (Number(creditSnap.data().balance) + Number(amount))
-          });
-          navigation.replace("Home");
+          if (Number(debitSnap.data().balance) < Number(amount)) {
+            alert("Der Betrag ist zu hoch als das Ihr Konto zur Verfügung hat.");
+          } else {
+            await updateDoc(debitRef, {
+              balance: (Number(debitSnap.data().balance) - Number(amount))
+            });
+
+            await updateDoc(creditRef, {
+              balance: (Number(creditSnap.data().balance) + Number(amount))
+            });
+            createTransaction(document.data().id, document.data().surname, document.data().name);
+          }
         }
       });
     }
+  }
+
+  const createTransaction = async (creditorId, receiverSurname, receiverName) => {
+    const userSnap = await getDoc(doc(firestore, "users", auth.currentUser.uid));
+    createTransferDoc(auth.currentUser.uid, creditorId, receiverSurname, receiverName, userSnap.data().surname, userSnap.data().name, debitAcc, iban, amount, "Zahlung");
+    navigation.replace("Home");
   }
 
   return (

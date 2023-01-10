@@ -21,8 +21,6 @@ export default function Registration({ navigation }) {
 	const [accounts, setAccounts] = useState([]);
 	const [debitAccs, setDebitAccs] = useState([]);
 
-	const [surname, setSurname] = useState("");
-	const [name, setName] = useState("");
 	useEffect(() => {
 		async function fetchData() {
 			// Defining all types of accounts
@@ -101,7 +99,7 @@ export default function Registration({ navigation }) {
 
 	const createTransaction = async () => {
 		const userSnap = await getDoc(doc(firestore, "users", auth.currentUser.uid));
-		createTransferDoc(auth.currentUser.uid, userSnap.data().surname, userSnap.data().name, debitAcc, creditAcc, amount);
+		createTransferDoc(auth.currentUser.uid, auth.currentUser.uid, userSnap.data().surname, userSnap.data().name, userSnap.data().surname, userSnap.data().name, debitAcc, creditAcc, amount, "Kontoübertrag");
 		navigation.replace("Home");
 	}
 
