@@ -107,7 +107,7 @@ export default function Registration({ navigation }) {
 					</View>
 				</ScrollView>
 			</View>
-			<View style={styles.main}>
+			<View>
 				<ScrollView
 					scrollEnabled={false}
 					keyboardShouldPersistTaps='handled'
@@ -181,16 +181,11 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		width: "100%",
-	},
-	header: {
-		flex: 1,
-		backgroundColor: "red",
-		width: "100%",
+		backgroundColor: '#3F2045',
 	},
 	headerRegistration: {
 		width: '100%',
 		height: 150,
-		backgroundColor: '#3F2045',
 		justifyContent: 'flex-end',
 		alignItems: 'center',
 		paddingBottom: 25,
@@ -199,11 +194,6 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 20,
 		color: '#fff',
-	},
-	main: {
-		flex: 4,
-		backgroundColor: "#3F2045",
-		width: "100%",
 	},
 	picker: {
 		margin: 30,
