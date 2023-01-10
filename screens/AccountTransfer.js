@@ -6,7 +6,7 @@ import buttonView from './styles/buttonView';
 import textLink from './styles/textLink';
 
 import { auth, firestore } from "../firebase";
-import { doc, getDoc, collection, setDoc, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc, collection, setDoc, getDocs, query, where, updateDoc } from "firebase/firestore";
 
 
 export default function Registration({ navigation }) {
@@ -17,12 +17,14 @@ export default function Registration({ navigation }) {
 	const [openDebitAcc, setOpenDebitAcc] = useState(false);
 	const [openCreditAcc, setOpenCreditAcc] = useState(false);
 	const [accounts, setAccounts] = useState([]);
+	const [debitAccs, setDebitAccs] = useState([]);
 
 	useEffect(() => {
 		async function fetchData() {
 			// Defining all types of accounts
 			var types = ["Privatkonto", "Sparkonto"];
 			// Defining array for all accounts
+			var debitAccs = [];
 			var accounts = [];
 			//Looping through all types of accounts
 			for (let i = 0; i < types.length; i++) {
@@ -45,31 +47,57 @@ export default function Registration({ navigation }) {
 						value: doc.data().iban
 					};
 					// Put datas into array for all accounts
+					if (doc.data().balance != "0") {
+						debitAccs[debitAccs.length] = newAccount;
+					}
 					accounts[accounts.length] = newAccount;
 				});
 			}
 			// Set useState with the accounts
+			
 			setAccounts(accounts);
+			setDebitAccs(debitAccs);
 		};
 		fetchData();
 	}, []);
 
 
-	const transfer = () => {
+	const preTransfer = () => {
 		if (debitAcc === creditAcc) {
 			alert("Sie können nicht auf das gleiche Konto transferieren.");
 		} else if (debitAcc === "" || creditAcc === "") {
 			alert("Bitte geben Sie die Kontos an.");
 		} else if (amount != "") {
-			navigation.replace("Home");
+			tranfer();
 		} else {
 			alert("Bitte geben Sie einen Betrag ein.");
 		}
 	}
 
+	const tranfer = async () => {
+		const debitRef = doc(firestore, "users", auth.currentUser.uid, "accounts", debitAcc);
+		const creditRef = doc(firestore, "users", auth.currentUser.uid, "accounts", creditAcc);
+
+		const debitSnap = await getDoc(debitRef);
+		const creditSnap = await getDoc(creditRef);
+
+		if(Number(debitSnap.data().balance) < Number(amount)){
+			alert("Der Betrag ist zu hoch als das Ihr Konto zur Verfügung hat.");
+		}else {
+			await updateDoc(debitRef, {
+				balance: (Number(debitSnap.data().balance) - Number(amount))
+			});
+	
+			await updateDoc(creditRef, {
+				balance: (Number(creditSnap.data().balance) + Number(amount))
+			});
+			navigation.replace("Home");
+		}
+	}
+
 	return (
 		<View style={styles.container}>
-			<View style={styles.header}>
+			<View>
 				<ScrollView
 					scrollEnabled={false}
 					keyboardShouldPersistTaps='handled'
@@ -85,63 +113,62 @@ export default function Registration({ navigation }) {
 					keyboardShouldPersistTaps='handled'
 				>
 					<View style={styles.container}>
-						<View style={styles.pickers}>
-							<View style={styles.picker}>
-								<Text>Belastungskonto</Text>
-								<DropDownPicker
-									open={openDebitAcc}
-									value={debitAcc}
-									items={accounts}
-									setOpen={setOpenDebitAcc}
-									setValue={setDebitAcc}
-									setItems={setAccounts}
-									maxHeight={75}
-									textStyle={{
-										fontSize: 10
-									}}
-								/>
-							</View>
-							<View style={styles.picker}>
-								<Text>Gutschriftskonto</Text>
-								<DropDownPicker
-									open={openCreditAcc}
-									value={creditAcc}
-									items={accounts}
-									setOpen={setOpenCreditAcc}
-									setValue={setCreditAcc}
-									setItems={setAccounts}
-									maxHeight={75}
-									textStyle={{
-										fontSize: 10
-									}}
-								/>
-							</View>
+						<View style={styles.picker}>
+							<Text style={[styles.text, { marginBottom: 10 }]}>Belastungskonto</Text>
+							<DropDownPicker
+								open={openDebitAcc}
+								value={debitAcc}
+								items={debitAccs}
+								setOpen={setOpenDebitAcc}
+								onOpen={setOpenCreditAcc}
+								setValue={setDebitAcc}
+								setItems={setDebitAccs}
+								maxHeight={60}
+								textStyle={{
+									fontSize: 10
+								}}
+							/>
 						</View>
-						<View style={styles.subcontent}>
-							<View style={styles.amount}>
-								<TextInput
-									style={styles.textInput}
-									onChangeText={(amount) => setAmount(amount)}
-									placeholder="Betrag"
-								/>
-								<Text>CHF</Text>
-							</View>
-							<View style={styles.buttons}>
-								<TouchableOpacity
-									style={[buttonView.button, { marginTop: 50 }]}
-									onPress={transfer}
-								>
-									<Text style={buttonView.buttonText}>Ausführen</Text>
-								</TouchableOpacity>
-								<TouchableOpacity
-									style={textLink.container}
-									onPress={() =>
-										navigation.replace("Login")
-									}
-								>
-									<Text style={textLink.textLinkLeft}>&lt; Abbrechen</Text>
-								</TouchableOpacity>
-							</View>
+						<View style={styles.picker}>
+							<Text style={[styles.text, { marginBottom: 10 }]}>Gutschriftskonto</Text>
+							<DropDownPicker
+								open={openCreditAcc}
+								value={creditAcc}
+								items={accounts}
+								setOpen={setOpenCreditAcc}
+								onOpen={setOpenDebitAcc}
+								setValue={setCreditAcc}
+								setItems={setAccounts}
+								maxHeight={60}
+								textStyle={{
+									fontSize: 10
+								}}
+
+							/>
+						</View>
+						<View style={styles.amount}>
+							<TextInput
+								style={styles.textInput}
+								onChangeText={(amount) => setAmount(amount)}
+								placeholder="Betrag"
+							/>
+							<Text style={[styles.text, { marginLeft: 30 }]}>CHF</Text>
+						</View>
+						<View style={styles.buttons}>
+							<TouchableOpacity
+								style={[buttonView.button, { marginTop: 50 }]}
+								onPress={preTransfer}
+							>
+								<Text style={buttonView.buttonText}>Ausführen</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={textLink.container}
+								onPress={() =>
+									navigation.replace("Login")
+								}
+							>
+								<Text style={textLink.textLinkLeft}>&lt; Abbrechen</Text>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</ScrollView>
@@ -160,26 +187,31 @@ const styles = StyleSheet.create({
 		backgroundColor: "red",
 		width: "100%",
 	},
+	headerRegistration: {
+		width: '100%',
+		height: 150,
+		backgroundColor: '#3F2045',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		paddingBottom: 25,
+	},
+	title: {
+		fontWeight: 'bold',
+		fontSize: 20,
+		color: '#fff',
+	},
 	main: {
 		flex: 4,
-		backgroundColor: "blue",
-		width: "100%",
-	},
-	pickers: {
-		flex: 1,
-		backgroundColor: "orange",
+		backgroundColor: "#3F2045",
 		width: "100%",
 	},
 	picker: {
-		margin: 50,
-	},
-	subcontent: {
-		flex: 1,
-		backgroundColor: "yellow",
-		width: "100%",
-		justifyContent: "center",
+		margin: 30,
+		width: "75%",
+		alignSelf: "center",
 	},
 	amount: {
+		marginTop: 50,
 		flexDirection: "row",
 		alignItems: "center",
 		width: "75%",
@@ -187,9 +219,12 @@ const styles = StyleSheet.create({
 	},
 	textInput: {
 		backgroundColor: "#FFF",
-		height: 50,
+		height: 40,
 		width: 100,
 		borderRadius: 5,
+	},
+	text: {
+		color: "#FFF",
 	},
 	buttons: {
 		width: "100%",

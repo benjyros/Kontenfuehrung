@@ -35,6 +35,7 @@ export default function Home({ navigation }) {
               return doc.data().type + " " + accounts.length;
             }
           }
+
           const newAccount = {
             id: accounts.length + 1,
             type: getType(),
@@ -48,7 +49,7 @@ export default function Home({ navigation }) {
       setAccounts(accounts);
     };
     fetchData();
-  }, []);
+  }, [navigation]);
 
 
   // Event handler when signing out

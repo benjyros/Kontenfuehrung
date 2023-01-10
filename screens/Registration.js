@@ -26,7 +26,6 @@ export default function Registration({ navigation }) {
         const user = userCredentials.user;
         // Add created user to database
         addUserToDB();
-        navigation.replace('Home');
       })
       .catch((error) => {
         console.log(error);
@@ -53,6 +52,7 @@ export default function Registration({ navigation }) {
       type: "Privatkonto",
       balance: 50,
     });
+    navigation.replace('Home');
   }
 
   const createIban = () => {
