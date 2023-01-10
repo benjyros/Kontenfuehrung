@@ -49,7 +49,7 @@ export default function Home({ navigation }) {
       setAccounts(accounts);
     };
     fetchData();
-  }, [navigation]);
+  }, []);
 
 
   // Event handler when signing out
@@ -189,9 +189,10 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingTop: 5,
     padding: 2,
+    opacity: 0.2,
   },
   selected: {
-    opacity: 0.2,
+    opacity: 1.0,
   },
   title: {
     fontWeight: "bold",
