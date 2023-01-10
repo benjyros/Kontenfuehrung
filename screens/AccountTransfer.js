@@ -5,6 +5,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import buttonView from './styles/buttonView';
 import textLink from './styles/textLink';
 
+import createTransferDoc from "./functions/transaction";
+
 import { auth, firestore } from "../firebase";
 import { doc, getDoc, collection, setDoc, getDocs, query, where, updateDoc, serverTimestamp } from "firebase/firestore";
 
@@ -93,30 +95,13 @@ export default function Registration({ navigation }) {
 			await updateDoc(creditRef, {
 				balance: (Number(creditSnap.data().balance) + Number(amount))
 			});
-			createTransferDoc();
+			createTransaction();
 		}
 	}
 
-	const createTransferDoc = async () => {
-		const userRef = doc(firestore, "users", auth.currentUser.uid);
-		const userSnap = getDoc(userRef);
-		createTransaction((await userSnap).data().surname, (await userSnap).data().name);
-	}
-
-	const createTransaction = async (surname, name) => {
-		var currentTimeInSeconds = Math.round(new Date().getTime() / 1000);
-		setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", debitAcc, "transactions", currentTimeInSeconds.toString()), {
-			timestamp: currentTimeInSeconds,
-			amount: "-" + amount + " CHF",
-			type: "Kontoübertrag",
-			receiver: surname + " " + name
-		});
-		setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", creditAcc, "transactions", currentTimeInSeconds.toString()), {
-			timestamp: currentTimeInSeconds,
-			amount: "+" + amount + " CHF",
-			type: "Kontoübertrag",
-			receiver: surname + " " + name
-		});
+	const createTransaction = async () => {
+		const userSnap = await getDoc(doc(firestore, "users", auth.currentUser.uid));
+		createTransferDoc(auth.currentUser.uid, userSnap.data().surname, userSnap.data().name, debitAcc, creditAcc, amount);
 		navigation.replace("Home");
 	}
 
