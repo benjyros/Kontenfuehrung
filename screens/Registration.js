@@ -7,6 +7,8 @@ import buttonView from './styles/buttonView';
 import inputView from './styles/inputView';
 import textLink from './styles/textLink';
 
+import createIban from './functions/iban';
+
 import { auth, firestore } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, collection, setDoc, getDocs } from "firebase/firestore";
@@ -53,19 +55,6 @@ export default function Registration({ navigation }) {
       balance: 50,
     });
     navigation.replace('Home');
-  }
-
-  const createIban = () => {
-    // Generate a random domestic bank account number
-    const accountNumber = Math.random().toString(36).substring(2);
-    // Generate a random check digit
-    const checkDigit = Math.floor(Math.random() * 10);
-    // Use a predefined country code
-    const countryCode = 'TWWIS';
-    // Concatenate the country code, check digit, and domestic bank account number to form the IBAN
-    const iban = countryCode + checkDigit + accountNumber;
-
-    return iban;
   }
 
   // Function for creating user
