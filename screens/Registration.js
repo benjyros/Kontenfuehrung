@@ -52,6 +52,8 @@ export default function Registration({ navigation }) {
     await setDoc(doc(firestore, "users", auth.currentUser.uid, "accounts", iban), {
       iban: iban,
       type: "Privatkonto",
+      name: "Privatkonto",
+      interest: "0.1",
       balance: 50,
     });
     navigation.replace('Home');

@@ -4,6 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 import buttonView from './styles/buttonView';
 import textLink from './styles/textLink';
+import inputView from "./styles/inputView";
 
 import createTransferDoc from "./functions/transaction";
 
@@ -15,6 +16,7 @@ export default function Registration({ navigation }) {
 	const [debitAcc, setDebitAcc] = useState("");
 	const [creditAcc, setCreditAcc] = useState("");
 	const [amount, setAmount] = useState("");
+	const [comment, setComment] = useState("");
 
 	const [openDebitAcc, setOpenDebitAcc] = useState(false);
 	const [openCreditAcc, setOpenCreditAcc] = useState(false);
@@ -72,7 +74,7 @@ export default function Registration({ navigation }) {
 		} else if (amount != "") {
 			transfer();
 		} else {
-			alert("Bitte geben Sie einen Betrag ein.");
+			alert("Bitte überprüfen Sie Ihre daten nochmals.");
 		}
 	}
 
@@ -99,8 +101,16 @@ export default function Registration({ navigation }) {
 
 	const createTransaction = async () => {
 		const userSnap = await getDoc(doc(firestore, "users", auth.currentUser.uid));
-		createTransferDoc(auth.currentUser.uid, auth.currentUser.uid, userSnap.data().surname, userSnap.data().name, userSnap.data().surname, userSnap.data().name, debitAcc, creditAcc, amount, "Kontoübertrag");
+		createTransferDoc(auth.currentUser.uid, auth.currentUser.uid, userSnap.data().surname, userSnap.data().name, userSnap.data().surname, userSnap.data().name, debitAcc, creditAcc, amount, comment, "Kontoübertrag");
 		navigation.replace("Home");
+	}
+
+	function handleChange(interest) {
+		if (isNaN(interest)) {
+			setAmount("");
+		} else {
+			setAmount(interest);
+		}
 	}
 
 	return (
@@ -110,7 +120,7 @@ export default function Registration({ navigation }) {
 					scrollEnabled={false}
 					keyboardShouldPersistTaps='handled'
 				>
-					<View style={styles.headerRegistration}>
+					<View style={styles.header}>
 						<Text style={styles.title}>Kontoübertrag</Text>
 					</View>
 				</ScrollView>
@@ -154,10 +164,18 @@ export default function Registration({ navigation }) {
 
 							/>
 						</View>
+						<View style={styles.inputs}>
+							<TextInput
+								style={inputView.textInput}
+								onChangeText={(comment) => setComment(comment)}
+								placeholder="Kommentar"
+							/>
+						</View>
 						<View style={styles.amount}>
 							<TextInput
 								style={styles.textInput}
-								onChangeText={(amount) => setAmount(amount)}
+								keyboardType="decimal-pad"
+								onChangeText={(amount) => handleChange(amount)}
 								placeholder="Betrag"
 							/>
 							<Text style={[styles.text, { marginLeft: 30 }]}>CHF</Text>
@@ -191,7 +209,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		backgroundColor: '#3F2045',
 	},
-	headerRegistration: {
+	header: {
 		width: '100%',
 		height: 150,
 		justifyContent: 'flex-end',
@@ -208,8 +226,12 @@ const styles = StyleSheet.create({
 		width: "75%",
 		alignSelf: "center",
 	},
+	inputs: {
+		marginTop: 20,
+		alignItems: "center",
+	},
 	amount: {
-		marginTop: 50,
+		marginTop: 20,
 		flexDirection: "row",
 		alignItems: "center",
 		width: "75%",

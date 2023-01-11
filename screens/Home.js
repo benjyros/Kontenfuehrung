@@ -11,6 +11,7 @@ export default function Home({ navigation }) {
 
   const [accounts, setAccounts] = useState([]);
   const [selected, setSelected] = useState(1);
+  const [previousDate, setPreviousDate] = useState("");
 
   const selectedAccount = accounts.find(({ id }) => id === selected);
 
@@ -50,30 +51,22 @@ export default function Home({ navigation }) {
 
   //function that return promise
   async function getData(doc, count, accounts) {
-    // Get specific datas out of the document
-    const getType = () => {
-      if (count === 0) {
-        return doc.data().type;
-      } else {
-        return doc.data().type + " " + accounts;
-      }
-    }
-
     var days = [];
     var transactions = [];
-    var transactionDate = "";
+    var newDate = "";
 
     const transactionsRef = collection(firestore, "users", auth.currentUser.uid, "accounts", doc.data().iban, "transactions");
     const transactionsSnap = await getDocs(transactionsRef);
     transactionsSnap.forEach((doc2) => {
+      
       const transaction = {
         type: doc2.data().type,
         amount: doc2.data().amount,
-        who: doc2.data().who
+        who: doc2.data().who,
+        comment: doc2.data().comment
       }
 
       transactions.push(transaction);
-      console.log(transactions);
 
       const date = new Date(doc2.id * 1000);
 
@@ -84,24 +77,31 @@ export default function Home({ navigation }) {
       const dd = String(day).padStart(2, '0');
       const mm = String(month).padStart(2, '0');
       const dateFormat = `${dd}.${mm}.${year}`;
-      console.log(transactionDate + " - " + dateFormat)
-      
-      if (transactionDate != dateFormat) {
-        transactionDate = dateFormat;
+
+      console.log("newdate:" + newDate);
+      console.log("dateFormat:" + dateFormat);
+
+      if (newDate != dateFormat) {
         const day = {
           date: dateFormat,
           transactions: transactions,
         }
         days.push(day);
-
+        
         transactions = [];
       }
+      else {
+        newDate = dateFormat;
+      }
+      
+      
     });
 
     const newAccount = {
       id: accounts + 1,
-      type: getType(),
+      name: doc.data().name,
       balance: doc.data().balance + " CHF",
+      interest: doc.data().interest + "%",
       transactions: days
     };
 
@@ -172,8 +172,9 @@ export default function Home({ navigation }) {
                   style={[styles.account, selected === account.id ? styles.selected : null]}
                   onPress={() => setSelected(account.id)}
                 >
-                  <Text style={styles.title}>{account.type}</Text>
+                  <Text style={styles.title}>{account.name}</Text>
                   <Text style={styles.text}>{account.balance}</Text>
+                  <Text style={styles.text}>{account.interest}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -196,12 +197,12 @@ export default function Home({ navigation }) {
                   style={transactionsStyle.childContainer}
                 >
                   <Text style={transactionsStyle.date}>{date}</Text>
-                  {transactions.map(({ type, amount, who }, index) => (
+                  {transactions.map(({ type, amount, who, comment }, index) => (
                     <View
                       key={index}
                       style={transactionsStyle.transaction}
                     >
-                      <Text style={transactionsStyle.text}>{type}: {amount} - {who}</Text>
+                      <Text style={transactionsStyle.text}>{type}: {amount} - {who}{"\n"}Kommentar: {comment}</Text>
                     </View>
                   ))}
                 </View>

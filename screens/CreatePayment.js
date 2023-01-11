@@ -17,6 +17,7 @@ export default function CreatePayment({ navigation }) {
   const [iban, setIban] = useState("");
   const [surname, setSurname] = useState("");
   const [name, setName] = useState("");
+  const [comment, setComment] = useState("");
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
@@ -84,8 +85,16 @@ export default function CreatePayment({ navigation }) {
 
   const createTransaction = async (creditorId, receiverSurname, receiverName) => {
     const userSnap = await getDoc(doc(firestore, "users", auth.currentUser.uid));
-    createTransferDoc(auth.currentUser.uid, creditorId, receiverSurname, receiverName, userSnap.data().surname, userSnap.data().name, debitAcc, iban, amount, "Zahlung");
+    createTransferDoc(auth.currentUser.uid, creditorId, receiverSurname, receiverName, userSnap.data().surname, userSnap.data().name, debitAcc, iban, amount, comment, "Zahlung");
     navigation.replace("Home");
+  }
+
+  function handleChange(amount) {
+    if (isNaN(amount)) {
+      setAmount("");
+    } else {
+      setAmount(amount);
+    }
   }
 
   return (
@@ -95,7 +104,7 @@ export default function CreatePayment({ navigation }) {
           scrollEnabled={false}
           keyboardShouldPersistTaps='handled'
         >
-          <View style={styles.headerRegistration}>
+          <View style={styles.header}>
             <Text style={styles.title}>Zahlung erfassen</Text>
           </View>
         </ScrollView>
@@ -122,6 +131,11 @@ export default function CreatePayment({ navigation }) {
                 onChangeText={(name) => setName(name)}
                 placeholder="Vorname"
               />
+              <TextInput
+                style={inputView.textInput}
+                onChangeText={(comment) => setComment(comment)}
+                placeholder="Kommentar"
+              />
             </View>
             <View style={{ width: "75%", alignSelf: "center" }}>
               <Text style={styles.text}>Belastung auf Privatkonto:</Text>
@@ -130,7 +144,8 @@ export default function CreatePayment({ navigation }) {
             <View style={styles.amount}>
               <TextInput
                 style={styles.textInput}
-                onChangeText={(amount) => setAmount(amount)}
+                keyboardType="decimal-pad"
+                onChangeText={(amount) => handleChange(amount)}
                 placeholder="Betrag"
               />
               <Text style={[styles.text, { marginLeft: 30 }]}>CHF</Text>
@@ -164,7 +179,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: '#3F2045',
   },
-  headerRegistration: {
+  header: {
     width: '100%',
     height: 250,
     justifyContent: 'flex-end',
