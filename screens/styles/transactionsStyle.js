@@ -25,6 +25,7 @@ export default StyleSheet.create({
         paddingHorizontal: 30,
     },
     text: {
+        fontSize: 10,
         marginBottom: 15,
     }
 });

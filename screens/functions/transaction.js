@@ -6,14 +6,14 @@ export default async function createTransferDoc(debitorId, creditorId, receiverS
     var currentTimeInSeconds = Math.round(new Date().getTime() / 1000);
     setDoc(doc(firestore, "users", debitorId, "accounts", debitAcc, "transactions", currentTimeInSeconds.toString()), {
         timestamp: currentTimeInSeconds,
-        amount: "-" + amount + " CHF",
+        amount: "- " + amount + " CHF",
         type: type,
-        receiver: receiverSurname + " " + receiverName
+        who: "an " + receiverSurname + " " + receiverName
     });
     setDoc(doc(firestore, "users", creditorId, "accounts", creditAcc, "transactions", currentTimeInSeconds.toString()), {
         timestamp: currentTimeInSeconds,
-        amount: "+" + amount + " CHF",
+        amount: "+"  + amount + " CHF",
         type: type,
-        sender: senderSurname + " " + senderName
+        who: "von " + senderSurname + " " + senderName
     });
 }
