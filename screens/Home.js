@@ -31,7 +31,7 @@ export default function Home({ navigation }) {
 
         //create array of promises
         const promises = []
-        
+
         for (const doc of querySnapshot.docs) {
           promises.push(getData(doc, i, count))
           count++;
@@ -40,7 +40,7 @@ export default function Home({ navigation }) {
         const newAccounts = await Promise.all(promises)
         //push all the newAccounts in accounts
         accounts.push(...newAccounts);
-        
+
       }
       // Set useState with the accounts
       setAccounts(accounts);
@@ -72,15 +72,24 @@ export default function Home({ navigation }) {
         who: doc2.data().who
       }
 
-      transactions[transactions.length] = transaction;
+      transactions.push(transaction);
+      console.log(transactions);
 
-      var t = new Date(1970, 0, 1);
-      t.setSeconds(doc2.id);
+      const date = new Date(doc2.id * 1000);
 
-      if (transactionDate != t) {
-        transactionDate = t;
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      const dd = String(day).padStart(2, '0');
+      const mm = String(month).padStart(2, '0');
+      const dateFormat = `${dd}.${mm}.${year}`;
+      console.log(transactionDate + " - " + dateFormat)
+      
+      if (transactionDate != dateFormat) {
+        transactionDate = dateFormat;
         const day = {
-          date: t,
+          date: dateFormat,
           transactions: transactions,
         }
         days.push(day);
@@ -172,6 +181,7 @@ export default function Home({ navigation }) {
         </View>
       </View>
       <View style={styles.main}>
+        <Text style={transactionsStyle.title}>Transaktionen</Text>
         {selectedAccount && (
           <ScrollView
             keyboardShouldPersistTaps='handled'
@@ -179,13 +189,13 @@ export default function Home({ navigation }) {
             <View
               style={transactionsStyle.container}
             >
-              <Text style={transactionsStyle.title}>Transaktionen</Text>
+
               {selectedAccount.transactions.map(({ date, transactions }, index) => (
                 <View
                   key={index}
                   style={transactionsStyle.childContainer}
                 >
-                  <Text style={transactionsStyle.date}>{date.toDateString()}</Text>
+                  <Text style={transactionsStyle.date}>{date}</Text>
                   {transactions.map(({ type, amount, who }, index) => (
                     <View
                       key={index}

@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
 		height: 40,
 		width: 100,
 		borderRadius: 5,
+		padding: 10,
 	},
 	text: {
 		color: "#FFF",
